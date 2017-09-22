@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load static %}
+{% block title %}
+    <title>Add Whitelist SHARE Preprint Providers</title>
+{% endblock title %}
+{% block content %}
+    <h2>List of SHARE Preprint Providers</h2>
+    <div id="sharePreprintProviders">
+        <ul data-bind="foreach: preprint_providers">
+            <li>
+                <input type="checkbox" data-bind="value: name, checked: $parent.providers_added">
+                <span data-bind="text: name"></span>
+            </li>
+        </ul>
+    </div>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="add" data-bind="value: ko.toJSON(providers_added)"></input>
+        <button type="submit", data-bind="disabled: providers_added().length === 0">Add</button>
+    </form>
+{% endblock content %}
+
+{% block bottom_js %}
+    {% render_bundle 'whitelist-add-page' %}
+    <script>
+        window.templateVars = {
+            "share_api_url" : "{{ share_api_url }}",
+            "api_v2_url" : "{{ api_v2_url }}"
+        }
+    </script>
+{% endblock %}

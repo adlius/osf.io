@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    <title>Whitelist of SHARE Preprint Providers</title>
+{% endblock title %}
+{% block content %}
+    <h2>Whitelist of SHARE Preprint Providers</h2>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Delete" />
+    </form>
+
+{% endblock content %}

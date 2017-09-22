@@ -3,6 +3,7 @@ import bleach
 from django import forms
 
 from osf.models import PreprintProvider, Subject
+from osf.models.preprint_provider import SharePreprintProviderWhitelisted
 from admin.base.utils import get_subject_rules, get_toplevel_subjects, get_nodelicense_choices
 
 
@@ -81,3 +82,15 @@ class PreprintProviderCustomTaxonomyForm(forms.Form):
             if hasattr(field, 'choices'):
                 if field.choices == []:
                     field.choices = subject_choices
+
+
+class SharePreprintProviderWhitelistDeleteForm(forms.ModelForm):
+    providers = forms.ModelMultipleChoiceField(queryset=SharePreprintProviderWhitelisted.objects.all(), widget=forms.CheckboxSelectMultiple)
+
+    class Meta:
+        model = SharePreprintProviderWhitelisted
+        fields = []
+
+    def save(self):
+        for provider in self.cleaned_data['providers']:
+            provider.delete()

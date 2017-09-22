@@ -4,6 +4,8 @@ from api.taxonomies.utils import optimize_subject_query
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db import transaction
+from django.db import IntegrityError
 
 from api.preprint_providers.permissions import GroupHelper, PERMISSIONS
 from osf.models.base import BaseModel, ObjectIDMixin
@@ -128,8 +130,24 @@ def rules_to_subjects(rules):
             q.append(models.Q(_id=sub))
     return Subject.objects.filter(reduce(lambda x, y: x | y, q)) if len(q) > 1 else (Subject.objects.filter(q[0]) if len(q) else Subject.objects.all())
 
-
 @receiver(post_save, sender=PreprintProvider)
 def create_provider_auth_groups(sender, instance, created, **kwargs):
     if created:
         GroupHelper(instance).update_provider_auth_groups()
+
+class SharePreprintProviderWhitelisted(models.Model):
+    id = models.AutoField(primary_key=True)
+    provider_name = models.CharField(default=None, null=True, blank=True, unique=True, max_length=200)
+
+    @classmethod
+    def create(cls, provider_name):
+        with transaction.atomic():
+            try:
+                provider = cls(provider_name=provider_name)
+                provider.save()
+            except IntegrityError:
+                return None
+        return provider
+
+    def __unicode__(self):
+        return self.provider_name

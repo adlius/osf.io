@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    <title>Whitelist of SHARE Preprint Providers</title>
+{% endblock title %}
+{% block content %}
+    <h2>Whitelist of SHARE Preprint Providers</h2>
+    <a href="{% url 'preprint_providers:whitelist_add' %}" class="btn btn-primary">Add</a>
+    <a href="{% url 'preprint_providers:whitelist_delete' %}" class="btn btn-primary">Delete</a>
+    <tbody>
+    {% for preprint_provider in object_list %}
+        <li>
+            <span>{{ preprint_provider.provider_name }}</span>
+        </li>
+    {% endfor %}
+    </tbody>
+
+    </table>
+
+{% endblock content %}

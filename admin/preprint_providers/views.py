@@ -10,14 +10,14 @@ from django.views.generic import ListView, DetailView, View, CreateView, DeleteV
 from django.core.management import call_command
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.forms.models import model_to_dict
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from website import settings as web_settings
 from admin.base import settings
 from admin.base.forms import ImportFileForm
-from admin.preprint_providers.forms import PreprintProviderForm, PreprintProviderCustomTaxonomyForm
+from admin.preprint_providers.forms import PreprintProviderForm, PreprintProviderCustomTaxonomyForm, SharePreprintProviderWhitelistDeleteForm
 from osf.models import PreprintProvider, Subject, NodeLicense
-from osf.models.preprint_provider import rules_to_subjects
+from osf.models.preprint_provider import rules_to_subjects, SharePreprintProviderWhitelisted
 
 # When preprint_providers exclusively use Subject relations for creation, set this to False
 SHOW_TAXONOMIES_IN_PREPRINT_PROVIDER_CREATE = True
@@ -367,3 +367,47 @@ class CreatePreprintProvider(PermissionRequiredMixin, CreateView):
         kwargs['show_taxonomies'] = SHOW_TAXONOMIES_IN_PREPRINT_PROVIDER_CREATE
         kwargs['tinymce_apikey'] = settings.TINYMCE_APIKEY
         return super(CreatePreprintProvider, self).get_context_data(*args, **kwargs)
+
+
+class SharePreprintProviderWhitelistAdd(PermissionRequiredMixin, View):
+    permission_required = 'osf.change_preprintprovider'
+    raise_exception = True
+    template_name = 'preprint_providers/whitelist_add.html'
+
+    def get(self, request):
+        share_api_url = settings.SHARE_URL
+        api_v2_url = settings.API_DOMAIN + settings.API_BASE
+        return render(request, self.template_name, {"share_api_url" : share_api_url, "api_v2_url" : api_v2_url})
+
+    def post(self, request):
+        providers_added = json.loads(request.POST.get('add'))
+        if len(providers_added) != 0:
+            for item in providers_added:
+                SharePreprintProviderWhitelisted.create(item)
+
+        return redirect('preprint_providers:whitelist_detail')
+
+class SharePreprintProviderWhitelistDetail(PermissionRequiredMixin, ListView):
+    permission_required = 'osf.change_preprintprovider'
+    raise_exception = True
+    template_name = 'preprint_providers/whitelist_detail.html'
+
+    def get_queryset(self):
+        return SharePreprintProviderWhitelisted.objects.all()
+
+
+class SharePreprintProviderWhitelistDelete(PermissionRequiredMixin, View):
+    permission_required = 'osf.change_preprintprovider'
+    raise_exception = True
+    template_name = 'preprint_providers/whitelist_delete.html'
+    form_class = SharePreprintProviderWhitelistDeleteForm
+
+    def post(self, request):
+        form = SharePreprintProviderWhitelistDeleteForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('preprint_providers:whitelist_detail')
+
+    def get(self, request):
+        form = SharePreprintProviderWhitelistDeleteForm()
+        return render(request, self.template_name, {'form': form})
