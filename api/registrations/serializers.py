@@ -276,23 +276,15 @@ class BaseRegistrationSerializer(NodeSerializer):
         return NodeSerializer.get_current_user_permissions(self, obj)
 
     def update(self, registration, validated_data):
-        #Update tags
         auth = get_user_auth(self.context['request'])
-        old_tags = set(registration.tags.values_list('name', flat=True))
-        if 'tags' in validated_data:
-            current_tags = set(validated_data.pop('tags', []))
-        elif self.partial:
-            current_tags = set(old_tags)
-        else:
-            current_tags = set()
 
-        try:
-            for new_tag in (current_tags - old_tags):
-                registration.add_tag(new_tag, auth=auth)
-            for deleted_tag in (old_tags - current_tags):
-                registration.remove_tag(deleted_tag, auth=auth)
-        except NodeStateError as err:
-            raise Conflict(err.message)
+        # Update tags
+        if 'tags' in validated_data:
+            new_tags = validated_data.pop('tags', [])
+            try:
+                registration.update_tags(new_tags, auth=auth)
+            except NodeStateError as err:
+                raise Conflict(err.message)
 
         is_public = validated_data.get('is_public', None)
         if is_public is not None:
