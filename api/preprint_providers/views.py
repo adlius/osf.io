@@ -5,6 +5,7 @@ from rest_framework import generics
 from rest_framework import permissions as drf_permissions
 from rest_framework.exceptions import NotAuthenticated
 
+from osf.models.preprint_provider import SharePreprintProviderWhitelisted
 from api.base import permissions as base_permissions
 from api.base.exceptions import InvalidFilterValue, InvalidFilterOperator, Conflict
 from api.base.filters import PreprintFilterMixin, ListFilterMixin
@@ -78,6 +79,13 @@ class PreprintProviderList(JSONAPIBaseView, generics.ListAPIView, ListFilterMixi
     view_name = 'preprint_providers-list'
 
     ordering = ('name', )
+
+    def get_renderer_context(self):
+        context = super(PreprintProviderList, self).get_renderer_context()
+        context['meta'] = {
+            'whitelisted_providers': [unicode(provider) for provider in SharePreprintProviderWhitelisted.objects.all()]
+        }
+        return context
 
     def get_default_queryset(self):
         return PreprintProvider.objects.all()

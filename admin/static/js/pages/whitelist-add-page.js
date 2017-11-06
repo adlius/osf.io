@@ -1,8 +1,6 @@
 'use strict';
 
 var $ = require('jquery');
-
-var $osf = require('js/osfHelpers');
 var ko = require('knockout');
 
 var AddWhitelistPreprintProvidersViewModel = function() {

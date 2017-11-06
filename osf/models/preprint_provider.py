@@ -135,6 +135,7 @@ def create_provider_auth_groups(sender, instance, created, **kwargs):
     if created:
         GroupHelper(instance).update_provider_auth_groups()
 
+
 class SharePreprintProviderWhitelisted(models.Model):
     id = models.AutoField(primary_key=True)
     provider_name = models.CharField(default=None, null=True, blank=True, unique=True, max_length=200)
