@@ -385,16 +385,7 @@ class SharePreprintProviderWhitelistAdd(PermissionRequiredMixin, View):
             for item in providers_added:
                 SharePreprintProviderWhitelisted.create(item)
 
-        return redirect('preprint_providers:whitelist_detail')
-
-class SharePreprintProviderWhitelistDetail(PermissionRequiredMixin, ListView):
-    permission_required = 'osf.change_preprintprovider'
-    raise_exception = True
-    template_name = 'preprint_providers/whitelist_detail.html'
-
-    def get_queryset(self):
-        return SharePreprintProviderWhitelisted.objects.all()
-
+        return redirect('preprint_providers:whitelist_delete')
 
 class SharePreprintProviderWhitelistDelete(PermissionRequiredMixin, View):
     permission_required = 'osf.change_preprintprovider'
@@ -406,7 +397,7 @@ class SharePreprintProviderWhitelistDelete(PermissionRequiredMixin, View):
         form = SharePreprintProviderWhitelistDeleteForm(request.POST)
         if form.is_valid():
             form.save()
-        return redirect('preprint_providers:whitelist_detail')
+        return redirect('preprint_providers:whitelist_delete')
 
     def get(self, request):
         form = SharePreprintProviderWhitelistDeleteForm()

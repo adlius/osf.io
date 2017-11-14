@@ -31,7 +31,8 @@ var config = Object.assign({}, common, {
         'admin-registration-edit-page': staticAdminPath('js/pages/admin-registration-edit-page.js'),
         'dashboard': staticAdminPath('js/sales_analytics/dashboard.js'),
         'metrics-page': staticAdminPath('js/pages/metrics-page.js'),
-        'whitelist-add-page': staticAdminPath('js/pages/whitelist-add-page.js')
+        'whitelist-add-page': staticAdminPath('js/pages/whitelist-add-page.js'),
+        'whitelist-delete-page': staticAdminPath('js/pages/whitelist-delete-page.js')
     },
     plugins: plugins,
     debug: true,

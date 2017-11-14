@@ -17,6 +17,5 @@ urlpatterns = [
     url(r'^(?P<preprint_provider_id>[a-z0-9]+)/delete/$', views.DeletePreprintProvider.as_view(), name='delete'),
     url(r'^(?P<preprint_provider_id>[a-z0-9]+)/export/$', views.ExportPreprintProvider.as_view(), name='export'),
     url(r'^whitelist_add/$', views.SharePreprintProviderWhitelistAdd.as_view(), name='whitelist_add'),
-    url(r'^whitelist_detail/$', views.SharePreprintProviderWhitelistDetail.as_view(), name='whitelist_detail'),
     url(r'^whitelist_delete/$', views.SharePreprintProviderWhitelistDelete.as_view(), name='whitelist_delete'),
 ]
