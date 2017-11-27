@@ -377,7 +377,7 @@ class SharePreprintProviderWhitelistAdd(PermissionRequiredMixin, View):
     def get(self, request):
         share_api_url = settings.SHARE_URL
         api_v2_url = settings.API_DOMAIN + settings.API_BASE
-        return render(request, self.template_name, {"share_api_url" : share_api_url, "api_v2_url" : api_v2_url})
+        return render(request, self.template_name, {'share_api_url': share_api_url, 'api_v2_url': api_v2_url})
 
     def post(self, request):
         providers_added = json.loads(request.POST.get('add'))
