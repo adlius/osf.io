@@ -28,6 +28,8 @@ AddWhitelistPreprintProvidersViewModel.prototype.updatePreprintProviders = funct
     $.when(share_api_call, api_v2_call).then(function (firstResponse, secondResponse) {
         var share_providers = firstResponse[0].aggregations.sources.buckets.map(function(item) {
             return item.key;
+        }).filter(function (item) {
+            return secondResponse[0].meta.whitelisted_providers.indexOf(item) < 0;
         });
 
         var internal_providers = secondResponse[0].data.map(function(item) {
