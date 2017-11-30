@@ -4,8 +4,6 @@ from api.taxonomies.utils import optimize_subject_query
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.db import transaction
-from django.db import IntegrityError
 
 from api.preprint_providers.permissions import GroupHelper, PERMISSIONS
 from osf.models.base import BaseModel, ObjectIDMixin
