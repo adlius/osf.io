@@ -142,12 +142,11 @@ class SharePreprintProviderWhitelisted(models.Model):
 
     @classmethod
     def create(cls, provider_name):
-        with transaction.atomic():
-            try:
-                provider = cls(provider_name=provider_name)
-                provider.save()
-            except IntegrityError:
-                return None
+        if not SharePreprintProviderWhitelisted.objects.filter(provider_name=provider_name).exists():
+            provider = cls(provider_name=provider_name)
+            provider.save()
+        else:
+            return None
         return provider
 
     def __unicode__(self):
