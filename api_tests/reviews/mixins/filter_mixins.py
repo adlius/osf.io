@@ -263,5 +263,6 @@ class ReviewProviderFilterMixin(object):
         try:
             with transaction.atomic():
                 res = get_actual(app, url, expect_errors=True, permissions='set_up_moderation')
+                assert res.status_code == 401
         except:
-            assert res.status_code == 401
+            pass
