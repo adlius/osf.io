@@ -259,5 +259,9 @@ class ReviewProviderFilterMixin(object):
         assert expected == actual
 
         # filter by permissions requires auth
-        res = get_actual(app, url, expect_errors=True, permissions='set_up_moderation')
-        assert res.status_code == 401
+        from django.db import transaction
+        try:
+            with transaction.atomic():
+                res = get_actual(app, url, expect_errors=True, permissions='set_up_moderation')
+        except:
+            assert res.status_code == 401
