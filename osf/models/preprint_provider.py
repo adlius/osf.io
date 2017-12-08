@@ -142,7 +142,6 @@ class SharePreprintProviderWhitelisted(models.Model):
     def create(cls, provider_name):
         if not SharePreprintProviderWhitelisted.objects.filter(provider_name=provider_name).exists():
             provider = cls(provider_name=provider_name)
-            provider.save()
         else:
             return None
         return provider

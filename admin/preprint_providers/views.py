@@ -383,7 +383,8 @@ class SharePreprintProviderWhitelistAdd(PermissionRequiredMixin, View):
         providers_added = json.loads(request.POST.get('add'))
         if len(providers_added) != 0:
             for item in providers_added:
-                SharePreprintProviderWhitelisted.create(item)
+                provider = SharePreprintProviderWhitelisted.create(item)
+                provider.save()
 
         return redirect('preprint_providers:whitelist_delete')
 
