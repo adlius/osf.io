@@ -92,10 +92,6 @@ class RegisterUser(PermissionRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('auth:register')
 
-    def get_initial(self):
-        initial = super(RegisterUser, self).get_initial()
-        initial['osf_id'] = self.request.GET.get('id')
-        return initial
 
 class DeskUserCreateFormView(PermissionRequiredMixin, CreateView):
     form_class = DeskUserForm
