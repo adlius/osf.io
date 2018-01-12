@@ -140,10 +140,11 @@ class SharePreprintProviderWhitelisted(models.Model):
 
     @classmethod
     def create(cls, provider_name):
-        provider, created = SharePreprintProviderWhitelisted.objects.get_or_create(provider_name=provider_name)
-        if created:
-            provider.save()
-            return provider
+        if not SharePreprintProviderWhitelisted.objects.filter(provider_name=provider_name).exists():
+            provider = cls(provider_name=provider_name)
+        else:
+            return None
+        return provider
 
     def __unicode__(self):
         return self.provider_name
