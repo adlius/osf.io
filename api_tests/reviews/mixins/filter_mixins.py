@@ -178,86 +178,86 @@ class ReviewableFilterMixin(object):
         assert expected == actual
 
 
-# @pytest.mark.django_db
-# class ReviewProviderFilterMixin(object):
-#
-#     @pytest.fixture()
-#     def url(self):
-#         raise NotImplementedError
-#
-#     @pytest.fixture()
-#     def expected_providers(self):
-#         return [
-#             PreprintProviderFactory(reviews_workflow='pre-moderation'),
-#             PreprintProviderFactory(reviews_workflow='post-moderation'),
-#             PreprintProviderFactory(reviews_workflow='pre-moderation'),
-#             PreprintProviderFactory(reviews_workflow=None),
-#         ]
-#
-#     @pytest.fixture()
-#     def moderator_pair(self, expected_providers):
-#         user = AuthUserFactory()
-#         provider = expected_providers[0]
-#         user.groups.add(GroupHelper(provider).get_group('moderator'))
-#         return (user, provider)
-#
-#     @pytest.fixture()
-#     def admin_pair(self, expected_providers):
-#         user = AuthUserFactory()
-#         provider = expected_providers[1]
-#         user.groups.add(GroupHelper(provider).get_group('admin'))
-#         return (user, provider)
-#
-#     def test_review_provider_filters(self, app, url, moderator_pair, admin_pair, expected_providers):
-#         # unfiltered
-#         expected = set([p._id for p in expected_providers])
-#         actual = get_actual(app, url)
-#         assert expected == actual
-#
-#         provider = expected_providers[0]
-#
-#         # filter by reviews_workflow
-#         expected = set([p._id for p in expected_providers if p.reviews_workflow == provider.reviews_workflow])
-#         actual = get_actual(app, url, reviews_workflow=provider.reviews_workflow)
-#         assert expected == actual
-#
-#         # filter by permissions (admin)
-#         user, provider = admin_pair
-#         expected = set([provider._id])
-#         actual = get_actual(app, url, user, permissions='view_actions')
-#         assert expected == actual
-#
-#         actual = get_actual(app, url, user, permissions='set_up_moderation')
-#         assert expected == actual
-#
-#         actual = get_actual(app, url, user, permissions='set_up_moderation,view_actions')
-#         assert expected == actual
-#
-#         # filter by permissions (moderator)
-#         user, provider = moderator_pair
-#         expected = set([provider._id])
-#         actual = get_actual(app, url, user, permissions='view_actions')
-#         assert expected == actual
-#
-#         actual = get_actual(app, url, user, permissions='set_up_moderation,view_actions')
-#         assert expected == actual
-#
-#         expected = set()
-#         actual = get_actual(app, url, user, permissions='set_up_moderation')
-#         assert expected == actual
-#
-#         # filter by permissions (rando)
-#         user = AuthUserFactory()
-#         expected = set()
-#         actual = get_actual(app, url, user, permissions='view_actions')
-#         assert expected == actual
-#
-#         actual = get_actual(app, url, user, permissions='set_up_moderation')
-#         assert expected == actual
-#
-#         actual = get_actual(app, url, user, permissions='set_up_moderation,view_actions')
-#         assert expected == actual
-#
-#         # filter by permissions requires auth
-#         res = get_actual(app, url, expect_errors=True, permissions='set_up_moderation')
-#         assert res.status_code == 401
+@pytest.mark.django_db
+class ReviewProviderFilterMixin(object):
+
+    @pytest.fixture()
+    def url(self):
+        raise NotImplementedError
+
+    @pytest.fixture()
+    def expected_providers(self):
+        return [
+            PreprintProviderFactory(reviews_workflow='pre-moderation'),
+            PreprintProviderFactory(reviews_workflow='post-moderation'),
+            PreprintProviderFactory(reviews_workflow='pre-moderation'),
+            PreprintProviderFactory(reviews_workflow=None),
+        ]
+
+    @pytest.fixture()
+    def moderator_pair(self, expected_providers):
+        user = AuthUserFactory()
+        provider = expected_providers[0]
+        user.groups.add(GroupHelper(provider).get_group('moderator'))
+        return (user, provider)
+
+    @pytest.fixture()
+    def admin_pair(self, expected_providers):
+        user = AuthUserFactory()
+        provider = expected_providers[1]
+        user.groups.add(GroupHelper(provider).get_group('admin'))
+        return (user, provider)
+
+    def test_review_provider_filters(self, app, url, moderator_pair, admin_pair, expected_providers):
+        # unfiltered
+        expected = set([p._id for p in expected_providers])
+        actual = get_actual(app, url)
+        assert expected == actual
+
+        provider = expected_providers[0]
+
+        # filter by reviews_workflow
+        expected = set([p._id for p in expected_providers if p.reviews_workflow == provider.reviews_workflow])
+        actual = get_actual(app, url, reviews_workflow=provider.reviews_workflow)
+        assert expected == actual
+
+        # filter by permissions (admin)
+        user, provider = admin_pair
+        expected = set([provider._id])
+        actual = get_actual(app, url, user, permissions='view_actions')
+        assert expected == actual
+
+        actual = get_actual(app, url, user, permissions='set_up_moderation')
+        assert expected == actual
+
+        actual = get_actual(app, url, user, permissions='set_up_moderation,view_actions')
+        assert expected == actual
+
+        # filter by permissions (moderator)
+        user, provider = moderator_pair
+        expected = set([provider._id])
+        actual = get_actual(app, url, user, permissions='view_actions')
+        assert expected == actual
+
+        actual = get_actual(app, url, user, permissions='set_up_moderation,view_actions')
+        assert expected == actual
+
+        expected = set()
+        actual = get_actual(app, url, user, permissions='set_up_moderation')
+        assert expected == actual
+
+        # filter by permissions (rando)
+        user = AuthUserFactory()
+        expected = set()
+        actual = get_actual(app, url, user, permissions='view_actions')
+        assert expected == actual
+
+        actual = get_actual(app, url, user, permissions='set_up_moderation')
+        assert expected == actual
+
+        actual = get_actual(app, url, user, permissions='set_up_moderation,view_actions')
+        assert expected == actual
+
+        # filter by permissions requires auth
+        res = get_actual(app, url, expect_errors=True, permissions='set_up_moderation')
+        assert res.status_code == 401
