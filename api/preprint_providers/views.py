@@ -82,7 +82,7 @@ class PreprintProviderList(JSONAPIBaseView, generics.ListAPIView, ListFilterMixi
     def get_renderer_context(self):
         context = super(PreprintProviderList, self).get_renderer_context()
         context['meta'] = {
-            'whitelisted_providers': [unicode(provider) for provider in SharePreprintProviderWhitelisted.objects.all()]
+            'whitelisted_providers': SharePreprintProviderWhitelisted.objects.all().values_list('provider_name', flat=True)
         }
         return context
 

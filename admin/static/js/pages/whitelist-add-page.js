@@ -13,7 +13,11 @@ var AddWhitelistPreprintProvidersViewModel = function() {
 
 AddWhitelistPreprintProvidersViewModel.prototype.updatePreprintProviders = function() {
     var self = this;
-    var query_obj = {"query":{"bool":{"must":{"query_string":{"query":"*"}},"filter":[{"terms":{"types":["preprint"]}}]}},"from":0,"aggregations":{"sources":{"terms":{"field":"sources","size":500}}}};
+    var query_obj = {
+        "size": 0,
+        "query": {"terms": {"types": ["preprint"]}},
+        "aggregations": {"sources": {"terms": {"field": "sources", "size": 500}}}
+    };
 
     var share_api_call =  $.ajax({
         url: self.share_api_url,

@@ -136,15 +136,14 @@ def create_provider_auth_groups(sender, instance, created, **kwargs):
 
 class SharePreprintProviderWhitelisted(models.Model):
     id = models.AutoField(primary_key=True)
-    provider_name = models.CharField(default=None, null=True, blank=True, unique=True, max_length=200)
+    provider_name = models.CharField(default=None, blank=True, unique=True, max_length=200)
 
     @classmethod
     def create(cls, provider_name):
-        if not SharePreprintProviderWhitelisted.objects.filter(provider_name=provider_name).exists():
-            provider = cls(provider_name=provider_name)
-        else:
-            return None
-        return provider
+        provider, created = SharePreprintProviderWhitelisted.objects.get_or_create(provider_name=provider_name)
+        if created:
+            provider.save()
+            return provider
 
     def __unicode__(self):
         return self.provider_name
