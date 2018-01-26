@@ -14,6 +14,7 @@ class LoginForm(forms.Form):
         required=True
     )
 
+
 class GroupPermissionModelMultipleChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         default_label = unicode(obj)
@@ -28,6 +29,7 @@ class GroupPermissionModelMultipleChoiceField(forms.ModelMultipleChoiceField):
             return customize_label
         else:
             return default_label
+
 
 class UserRegistrationForm(forms.Form):
     """ A form that finds an existing OSF User, and grants permissions to that
