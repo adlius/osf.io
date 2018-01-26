@@ -51,7 +51,7 @@ class GroupHelper(object):
     def format_group(self, name):
         if name not in GROUPS:
             raise ValueError('Invalid reviews group: "{}"'.format(name))
-        return GROUP_FORMAT.format(provider_id=self.provider._id, group=name)
+        return GROUP_FORMAT.format(provider_id=self.provider.id, group=name)
 
     def get_group(self, name):
         return Group.objects.get(name=self.format_group(name))
