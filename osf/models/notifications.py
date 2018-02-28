@@ -19,7 +19,7 @@ class NotificationSubscription(BaseModel):
                              null=True, blank=True, on_delete=models.CASCADE)
     node = models.ForeignKey('Node', related_name='notification_subscriptions',
                              null=True, blank=True, on_delete=models.CASCADE)
-    provider = models.ForeignKey('PreprintProvider', related_name='notification_subscriptions',
+    provider = models.ForeignKey('AbstractProvider', related_name='notification_subscriptions',
                                  null=True, blank=True, on_delete=models.CASCADE)
 
     # Notification types
