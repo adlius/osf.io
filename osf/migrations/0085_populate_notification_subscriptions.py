@@ -1,5 +1,4 @@
 import logging
-import os
 
 from django.db import migrations
 
@@ -33,7 +32,7 @@ def revert(*args):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('osf', '0081_notificationsubscription_provider'),
+        ('osf', '0084_notificationsubscription_provider'),
     ]
 
     operations = [
