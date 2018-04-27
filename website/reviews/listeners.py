@@ -67,7 +67,7 @@ def reviews_submit_notification_moderators(self, context):
                         context['referrer'],
                         context['reviewable'].node,
                         timezone.now(),
-                        context['reviewable'].provider,
+                        abstract_provider=context['reviewable'].provider,
                         **context)
 
     # Store emails to be sent to subscribers daily
@@ -77,5 +77,5 @@ def reviews_submit_notification_moderators(self, context):
                         context['referrer'],
                         context['reviewable'].node,
                         timezone.now(),
-                        context['reviewable'].provider,
+                        abstract_provider=context['reviewable'].provider,
                         **context)
