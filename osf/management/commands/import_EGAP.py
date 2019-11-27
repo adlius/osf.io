@@ -9,7 +9,6 @@ import json
 import shutil
 import requests
 import tempfile
-from django.db import transaction
 from django.core.management.base import BaseCommand
 
 from osf.utils.permissions import ADMIN, WRITE
@@ -102,7 +101,11 @@ def rollback_node_from_project_json(egap_assets_path, egap_project_dir, creator)
     return
 
 
-def recursive_upload(auth, node, dir_path, parent='', metadata=list()):
+def recursive_upload(auth, node, dir_path, parent='', metadata=None):
+
+    if metadata is None:
+        metadata = []
+
     try:
         for item in os.listdir(dir_path):
             item_path = os.path.join(dir_path, item)
@@ -278,11 +281,10 @@ def main(guid, creator_username):
             sanction_type = 'Embargo'
 
         logger.info(
-            'Beginning atomic transaction to register {}'.format(node._id)
+            'Attempting to register {} silently'.format(node._id)
         )
         try:
-            with transaction.atomic():
-                register_silently(draft_registration, Auth(creator), sanction_type, egap_registration_date, egap_embargo_public_date)
+            register_silently(draft_registration, Auth(creator), sanction_type, egap_registration_date, egap_embargo_public_date)
         except Exception as err:
             logger.error(
                 'Unexpected error raised when attempting to silently register '
