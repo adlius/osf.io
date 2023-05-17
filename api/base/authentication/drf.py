@@ -40,7 +40,7 @@ def drf_get_session_from_cookie(cookie_val):
         session_key = ensure_str(itsdangerous.Signer(settings.SECRET_KEY).unsign(cookie_val))
     except itsdangerous.BadSignature:
         return None
-    return SessionStore(session_key=session_key) if SessionStore().exists(session_key=session_key) else None
+    return SessionStore(session_key=session_key)
 
 
 def check_user(user):
