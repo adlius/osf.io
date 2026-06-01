@@ -1,9 +1,22 @@
+import copy
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from jsonschema import validate as jsonschema_validate, ValidationError as JsonSchemaValidationError
 
 from osf.models.base import BaseModel, ObjectIDMixin
 from osf.utils.datetime_aware_jsonfield import DateTimeAwareJSONField
+
+IGNORED_REQUIRED_PROPERTIES = {
+    '@id',
+    'schema:isBasedOn',
+    'schema:name',
+    'schema:description',
+    'pav:createdOn',
+    'pav:createdBy',
+    'pav:lastUpdatedOn',
+    'oslc:modifiedBy',
+}
 
 
 class CedarMetadataTemplate(ObjectIDMixin, BaseModel):
@@ -51,8 +64,26 @@ class CedarMetadataRecord(ObjectIDMixin, BaseModel):
 
     def clean(self):
         if self.is_published:
+            schema = copy.deepcopy(self.template.template)
+            required = schema.get('required')
+            if isinstance(required, list):
+                required[:] = [prop for prop in required if prop not in IGNORED_REQUIRED_PROPERTIES]
+            context_schema = schema.get('properties', {}).get('@context', {})
+            context_required = context_schema.get('required')
+            if (
+                isinstance(self.metadata, dict)
+                and isinstance(self.metadata.get('@context'), dict)
+                and isinstance(context_required, list)
+            ):
+                allowed_context_fields = set(context_required)
+                self.metadata['@context'] = {
+                    key: value
+                    for key, value in self.metadata['@context'].items()
+                    if key in allowed_context_fields
+                }
+
             try:
-                jsonschema_validate(self.metadata, self.template.template)
+                jsonschema_validate(self.metadata, schema)
             except JsonSchemaValidationError as e:
                 raise ValidationError(
                     f'CEDAR metadata does not validate against template "{self.template.schema_name}": {e.message}'
